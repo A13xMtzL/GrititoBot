@@ -1,4 +1,5 @@
 const { Client, Intents } = require("discord.js");
+
 const Discord = require("discord.js");
 const client = new Client({
 
@@ -37,7 +38,8 @@ client.on("message", (message) => {
   }
 
   if (command === "say") {
-    if (!hasPermission(message)) return;
+    // if (!hasPermission(message)) return;
+    if (message.content.length<=0) return;
 
     let text = args.join(" ");
     message.delete();
@@ -50,6 +52,8 @@ client.on("message", (message) => {
     let member = message.mentions.members.first();
     let reason = args.slice(1).join(" ");
     member.kick(reason);
+
+    message.channel.send(`${member} fue sacado del servidor. Pipipi`);
   }
 
   if (command === "ban") {
@@ -128,10 +132,11 @@ client.on("message", (message) => {
    **${config.prefix}delete** - Borra todos los mensajes del canal \n
    **${config.prefix}avatar** - Muestra el avatar de un usuario \n
    **${config.prefix}server** - Muestra información del servidor \n
-   **${config.prefix}user- nfo** - Muestra información del usuario \n
+   **${config.prefix}user-info** - Muestra información del usuario \n
    **${config.prefix}info** - Muestra información del bot \n
    **${config.prefix}random** - Muestra un número aleatorio \n
    **${config.prefix}help** - Muestra esta lista de comandos \n
+    **${config.prefix}meme** - Muestra un meme aleatorio \n
     `);
   }
 
@@ -146,12 +151,12 @@ client.on("message", (message) => {
       .addField('Server ID', message.guild.id)
       .setThumbnail('https://cdn.discordapp.com/attachments/766881421243449355/807196535980425226/image0.jpg')
       .setTimestamp()
-      .setFooter('Created by @27a13xml');
+      .setFooter('Bot created by @27a13xml');
 
     message.channel.send(embed);
   }
 
-  if (command === "randomM") {
+  if (command === "meme") {
     const listGifs = [
       'https://media.giphy.com/media/EXHHMS9caoxAA/giphy.gif',
       'https://media.giphy.com/media/NQL7Wuo2JSQSY/giphy.gif',
@@ -180,7 +185,34 @@ client.on('ready', () => {
   console.log('My Ready is Body');
 });
 
-
-
 // Secret token for the bot
 client.login(config.token);
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// // const { Client, Intents, Collection } = require("discord.js");
+// // const fs = require("fs");
+
+// // const client = new Client({
+// //   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
+// // });
+
+// // const config = require("./config.json");
+
+// // client.config = config;
+// // client.commands = new Collection();
+
+// // const eventFiles = fs.readdirSync("./events").filter(file => file.endsWith(".js"));
+// // for (const file of eventFiles) {
+// //   const event = require(`./events/${file}`);
+// //   client.on(file.split(".")[0], event.bind(null, client));
+// // }
+
+// // const commandFiles = fs.readdirSync("./commands").filter(file => file.endsWith(".js"));
+// // for (const file of commandFiles) {
+// //   const command = require(`./commands/${file}`);
+// //   client.commands.set(command.name, command);
+// //   console.log(`Attempting to load command ${command.name}`)
+// // }
+
+// // client.login(config.token);
