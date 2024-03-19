@@ -1,6 +1,8 @@
-exports.run = async (client, message, args) => {
-  message.channel.send("pong!")
-    .cath(console.error);
-}
-
-exports.name = "ping";
+module.exports = {
+  name: 'ping',
+  description: 'Muestra el ping del bot en ms',
+  run : async (client, message, args) => {
+  const latency = Date.now() - message.createdTimestamp;
+  message.channel.send("**Pong!** \t Latency: " + latency + "ms")
+    .catch(console.error);
+}}
