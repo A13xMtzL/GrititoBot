@@ -2,3 +2,5 @@
 .vscode
 package-lock.json
 *.env
+config.json
+viejo_index.js

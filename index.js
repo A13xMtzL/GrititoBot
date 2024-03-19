@@ -1,42 +1,44 @@
-const Discord = require("discord.js");
-// Trae las variables de entorno
-// const env = require("dotenv");
-const prefix = "<<";
 
-const bot = new Discord.Client({
-  description:
-    "Esto es un bot de prueba, aún no sabemos qué estamos haciendo xd\nCualquier duda, guárdesela",
-  intents: [
-    "GUILD_MESSAGES",
-    "GUILD_MESSAGE_REACTIONS",
-    "DIRECT_MESSAGES",
-    "DIRECT_MESSAGE_REACTIONS",
-  ],
+// --------------------------------------------------------------------------------------------------------------------
+const { Client, Intents, Collection } = require("discord.js");
+const fs = require("fs");
+
+const client = new Client({
+  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
 });
 
-bot.login(
-  "MTA1NDQ5NzgyNDE2NDgxNDk2MQ.GVYGgo.iDbf5lUviNZrWet5GVuE7FqG3USyMgnytxROjo"
-);
+const config = require("./config.json");
 
-bot.on("ready", () => {
-  console.log(`Logged in as ${bot.user.tag} and is ready! `);
-});
+client.config = config;
+client.commands = new Collection();
 
-// // bot.on("message", (message) => {
-// //   if (message.author.bot) return; // Evitar responder a otros bots o a sí mismo
-// //   console.log("Contenido del mensaje: " + message.content.toString());
-// //   message.channel.send("El mensaje que se mandó fue: " + message.content);
-// //   message.channel.send("I received your message!");
-// // });
+const eventFiles = fs.readdirSync("./events").filter(file => file.endsWith(".js"));
+for (const file of eventFiles) {
+  const event = require(`./events/${file}`);
+  client.on(file.split(".")[0], event.bind(null, client));
+}
 
-bot.on("message", (message) => {
-  if (!message.content.startsWith(prefix)) return;
+const commandFiles = fs.readdirSync("./commands").filter(file => file.endsWith(".js"));
+for (const file of commandFiles) {
+  const command = require(`./commands/${file}`);
+  client.commands.set(command.name, command);
+  console.log(`Attempting to load command ${command.name}`)
+}
 
-  const command = message.content.slice(prefix.length).trim().split(' ')[0];
+client.on('message', message => {
+  if (!message.content.startsWith(config.prefix) || message.author.bot) return;
 
-  if (command === "ping") {
-    const latency = Date.now() - message.createdTimestamp;
-    message.channel.send(`**pong!** \t Latency: ${latency}ms`);
+  const args = message.content.slice(config.prefix.length).trim().split(/ +/);
+  const command = args.shift().toLowerCase();
+
+  if (!client.commands.has(command)) return;
+
+  try {
+    client.commands.get(command).run(client, message, args);
+  } catch (error) {
+    console.error(error);
+    message.reply('Hubo un error al intentar ejecutar ese comando!');
   }
 });
 
+client.login(config.token);
