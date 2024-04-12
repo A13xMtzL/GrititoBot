@@ -1,7 +1,7 @@
-
 // --------------------------------------------------------------------------------------------------------------------
-const { Client, Intents, Collection } = require("discord.js");
+const {Client, Intents, Collection } = require("discord.js");
 const fs = require("fs");
+const { Player } = require('discord-player');
 
 const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
@@ -40,5 +40,15 @@ client.on('message', message => {
     message.reply('Hubo un error al intentar ejecutar ese comando!');
   }
 });
+
+// client.Player = new Player(client, {
+//   leaveOnEmpty: true,
+//   leaveOnEnd: true,
+//   leaveOnStop: true, 
+//   leaveOnEmptyCooldown: 60000,
+//   autoSelfDeaf: true,
+//   initialVolume: 50,
+// });
+
 
 client.login(config.token);
